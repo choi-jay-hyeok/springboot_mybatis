@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller // controller 지정 - 자동으로 스프링빈 등록(내부에 @component 어노테이션이 있음)
@@ -18,18 +19,21 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    @GetMapping("/save")
+    // 게시글 폼
+    @GetMapping("/save") // /save 로 get 요청이 오면 해당 메서드 실행
     public String save() {
         return "save";
     }
 
+    // 게시글 저장
     @PostMapping("/save")
-    public String save(@ModelAttribute BoardDTO boardDTO) {
+    public String save(@ModelAttribute BoardDTO boardDTO) throws IOException {
         System.out.println("boardDTO = " + boardDTO);
         boardService.save(boardDTO);
         return "redirect:/list";
     }
 
+    // 목록
     @GetMapping("/list")
     public String findAll(Model model) {
         List<BoardDTO> boardDTOList = boardService.findAll();
@@ -38,6 +42,7 @@ public class BoardController {
         return "list";
     }
 
+    // 상세페이지
     @GetMapping("/{id}")
     public String findById(@PathVariable("id") Long id, Model model) {
         // 조회수 처리
@@ -50,6 +55,7 @@ public class BoardController {
         return "detail";
     }
 
+    // 게시글 수정 폼
     @GetMapping("/update/{id}")
     public String update(@PathVariable("id") Long id, Model model) {
         BoardDTO boardDTO = boardService.findById(id);
@@ -57,11 +63,19 @@ public class BoardController {
         return "update";
     }
 
+    // 게시글 수정
     @PostMapping("/update/{id}")
     public String update(BoardDTO boardDTO, Model model) {
         boardService.update(boardDTO);
         BoardDTO dto = boardService.findById(boardDTO.getId());
         model.addAttribute("board", dto);
         return "detail";
+    }
+
+    // 삭제
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Long id) {
+        boardService.delete(id);
+        return "redirect:/list";
     }
 }
