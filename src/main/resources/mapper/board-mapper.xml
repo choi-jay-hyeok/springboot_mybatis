@@ -4,8 +4,8 @@
 
 <mapper namespace="Board">
     <insert id="save" parameterType="board" useGeneratedKeys="true" keyProperty="id"> <!-- parameterType="board"는 mybatis-config 에서 alias 로 설정한 board, alias 안해주면 parameterType 에 매번 전체 경로를 써줘야 함-->
-        insert into board_table(boardTitle, boardWriter, boardPass, boardContents)
-            values(#{boardTitle}, #{boardWriter}, #{boardPass}, #{boardContents}) <!-- #{} 안에는 dto 필드 이름과 동일해야 함 -->
+        insert into board_table(boardTitle, boardWriter, boardPass, boardContents, fileAttached)
+            values(#{boardTitle}, #{boardWriter}, #{boardPass}, #{boardContents}, #{fileAttached}) <!-- #{} 안에는 dto 필드 이름과 동일해야 함 -->
     </insert>
     <select id="findAll" resultType="board">
         select id, boardTitle, boardWriter, boardHits, date_format(createdAt, "%Y-%m-%d") as createdAt
@@ -16,7 +16,7 @@
     </update>
     <select id="findById" parameterType="Long" resultType="board">
         select id, boardTitle, boardWriter, boardPass, boardContents, boardHits,
-        date_format(createdAt, "%Y-%m-%d %H:%i:%s") as createdAt
+        date_format(createdAt, "%Y-%m-%d %H:%i:%s") as createdAt, fileAttached
         from board_table where id=#{id}
     </select>
     <update id="update">
